@@ -1,9 +1,10 @@
 
-[CPP]
-Install s2i tool: 
+# CPP
 
-    install-s2i-tool.log
+## Install s2i tool: 
+
+    CPP/install-s2i-tool.log
     
-Creating your own base image: 
+## Creating your own base image: 
 
-    build-cpp-image.log
+    CPP/build-cpp-image.log
