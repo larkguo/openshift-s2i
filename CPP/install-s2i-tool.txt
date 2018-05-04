@@ -1,0 +1,22 @@
+[root@node6 ~]# wget https://github.com/openshift/source-to-image/releases/download/v1.1.9a/source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz
+--2018-05-03 13:35:45--  https://github.com/openshift/source-to-image/releases/download/v1.1.9a/source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz
+Resolving github.com (github.com)... 13.250.177.223, 52.74.223.119, 13.229.188.59
+Connecting to github.com (github.com)|13.250.177.223|:443... connected.
+HTTP request sent, awaiting response... 302 Found
+Location: https://github-production-release-asset-2e65be.s3.amazonaws.com/16323162/3bb50994-2224-11e8-9529-da19ab130de4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180503%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180503T053546Z&X-Amz-Expires=300&X-Amz-Signature=f95c674dd0797d5065b3bed5f5b637857b95c5cbffccda3d7deb2dbd65714d1c&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dsource-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz&response-content-type=application%2Foctet-stream [following]
+--2018-05-03 13:35:47--  https://github-production-release-asset-2e65be.s3.amazonaws.com/16323162/3bb50994-2224-11e8-9529-da19ab130de4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20180503%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20180503T053546Z&X-Amz-Expires=300&X-Amz-Signature=f95c674dd0797d5065b3bed5f5b637857b95c5cbffccda3d7deb2dbd65714d1c&X-Amz-SignedHeaders=host&actor_id=0&response-content-disposition=attachment%3B%20filename%3Dsource-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz&response-content-type=application%2Foctet-stream
+Resolving github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)... 52.216.163.59
+Connecting to github-production-release-asset-2e65be.s3.amazonaws.com (github-production-release-asset-2e65be.s3.amazonaws.com)|52.216.163.59|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 2544792 (2.4M) [application/octet-stream]
+Saving to: ‘source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz’
+
+100%[==========================================================================================>] 2,544,792    304KB/s   in 13s    
+
+2018-05-03 13:36:01 (193 KB/s) - ‘source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz’ saved [2544792/2544792]
+
+[root@node6 ~]# tar -xvzf source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz -C /usr/bin
+./
+./s2i
+./sti
+[root@node6 ~]#

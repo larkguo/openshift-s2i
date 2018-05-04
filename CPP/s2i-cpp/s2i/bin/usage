@@ -1,0 +1,14 @@
+#!/bin/bash -e
+cat <<EOF
+This is the openshift/base-centos7 S2I image:
+To use it, install S2I: https://github.com/openshift/source-to-image
+
+Sample invocation:
+
+s2i build <source code path/URL> openshift/base-centos7 <application image>
+s2i build https://github.com/larkguo/tests.git  s2i-cpp  s2i-test
+
+You can then run the resulting image via:
+docker run <application image>
+docker run  -p 8000:8000  s2i-test
+EOF

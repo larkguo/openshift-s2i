@@ -1,0 +1,380 @@
+[root@node6 ~]# s2i create openshift/base-centos7 s2i-cpp
+[root@node6 ~]# ll
+total 2492
+-rw-------. 1 root root    1369 Nov  1  2017 anaconda-ks.cfg
+drwx------  4 root root      80 May  3 18:06 s2i-cpp
+-rw-r--r--  1 root root 2544792 Mar  8 05:26 source-to-image-v1.1.9a-40ad911d-linux-amd64.tar.gz
+[root@node6 ~]# cd s2i-cpp/
+[root@node6 s2i-cpp]# ll
+total 16
+-rw------- 1 root root 1360 May  3 18:06 Dockerfile
+-rw------- 1 root root  199 May  3 18:06 Makefile
+-rw------- 1 root root 4247 May  3 18:06 README.md
+drwx------ 3 root root   17 May  3 18:06 s2i
+drwx------ 3 root root   33 May  3 18:06 test
+[root@node6 s2i-cpp]# tree ./
+./
+├── Dockerfile
+├── etc
+│   └── lighttpd.conf
+├── Makefile
+├── README.md
+├── s2i
+│   └── bin
+│       ├── assemble
+│       ├── run
+│       ├── save-artifacts
+│       └── usage
+└── test
+    ├── run
+    └── test-app
+        └── index.html
+
+5 directories, 10 files
+[root@node6 s2i-cpp]#
+[root@node6 s2i-cpp]# cat Dockerfile 
+# openshift/base-centos7
+FROM openshift/base-centos7
+
+# TODO: Put the maintainer name in the image metadata
+# LABEL maintainer="Your Name <your@email.com>"
+
+# TODO: Rename the builder environment variable to inform users about application you provide them
+# ENV BUILDER_VERSION 1.0
+
+# TODO: Set labels used in OpenShift to describe the builder image
+#LABEL io.k8s.description="Platform for building xyz" \
+#      io.k8s.display-name="builder x.y.z" \
+#      io.openshift.expose-services="8080:http" \
+#      io.openshift.tags="builder,x.y.z,etc."
+
+# TODO: Install required packages here:
+# RUN yum install -y ... && yum clean all -y
+#RUN yum install -y rubygems && yum clean all -y
+#RUN gem install asdf
+RUN yum install -y epel-release
+RUN yum install -y net-tools
+RUN yum clean all -y
+
+
+# TODO (optional): Copy the builder files into /opt/app-root
+# COPY ./<builder_folder>/ /opt/app-root/
+
+# TODO: Copy the S2I scripts to /usr/libexec/s2i, since openshift/base-centos7 image
+# sets io.openshift.s2i.scripts-url label that way, or update that label
+COPY ./s2i/bin/ /usr/libexec/s2i
+
+# Copy the configuration file
+#COPY ./etc/ /opt/app-root/etc
+
+# TODO: Drop the root user and make the content of /opt/app-root owned by user 1001
+# RUN chown -R 1001:1001 /opt/app-root
+
+# This default user is created in the openshift/base-centos7 image
+USER 1001
+
+# TODO: Set the default port for applications built using this image
+EXPOSE 8000
+
+# TODO: Set the default CMD for the image
+CMD ["/usr/libexec/s2i/usage"]
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# make
+docker build -t s2i-cpp .
+Sending build context to Docker daemon 23.55 kB
+Step 1/8 : FROM openshift/base-centos7
+ ---> 4842f0bd3d61
+Step 2/8 : RUN yum install -y epel-release
+ ---> Running in cd328ed1446d
+
+Loaded plugins: fastestmirror, ovl
+http://mirrors.njupt.edu.cn/centos/7.4.1708/updates/x86_64/repodata/61b17aa9329dbd5348d6d2f3592c5139a334dc0e876c6450334237c867b78c03-primary.sqlite.bz2: [Errno 14] curl#56 - "Recv failure: Connection reset by peer"
+Trying other mirror.
+Determining fastest mirrors
+ * base: mirror.bit.edu.cn
+ * extras: mirror.bit.edu.cn
+ * updates: mirror.bit.edu.cn
+Resolving Dependencies
+--> Running transaction check
+---> Package epel-release.noarch 0:7-9 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package                Arch             Version         Repository        Size
+================================================================================
+Installing:
+ epel-release           noarch           7-9             extras            14 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 14 k
+Installed size: 24 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : epel-release-7-9.noarch                                      1/1 
+  Verifying  : epel-release-7-9.noarch                                      1/1 
+
+Installed:
+  epel-release.noarch 0:7-9                                                     
+
+Complete!
+ ---> 43634e3a8585
+Removing intermediate container cd328ed1446d
+Step 3/8 : RUN yum install -y net-tools
+ ---> Running in 8dde154b9c0c
+
+Loaded plugins: fastestmirror, ovl
+Loading mirror speeds from cached hostfile
+ * base: mirror.bit.edu.cn
+ * epel: mirrors.tuna.tsinghua.edu.cn
+ * extras: mirror.bit.edu.cn
+ * updates: mirror.bit.edu.cn
+Resolving Dependencies
+--> Running transaction check
+---> Package net-tools.x86_64 0:2.0-0.22.20131004git.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+================================================================================
+ Package         Arch         Version                          Repository  Size
+================================================================================
+Installing:
+ net-tools       x86_64       2.0-0.22.20131004git.el7         base       305 k
+
+Transaction Summary
+================================================================================
+Install  1 Package
+
+Total download size: 305 k
+Installed size: 917 k
+Downloading packages:
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : net-tools-2.0-0.22.20131004git.el7.x86_64                    1/1 
+  Verifying  : net-tools-2.0-0.22.20131004git.el7.x86_64                    1/1 
+
+Installed:
+  net-tools.x86_64 0:2.0-0.22.20131004git.el7                                   
+
+Complete!
+
+ ---> bf570657ded5
+Removing intermediate container 8dde154b9c0c
+Step 4/8 : RUN yum clean all -y
+ ---> Running in 1a2b9137a220
+
+Loaded plugins: fastestmirror, ovl
+Cleaning repos: base epel extras updates
+Cleaning up everything
+Cleaning up list of fastest mirrors
+ ---> 9f927a4e4d22
+Removing intermediate container 1a2b9137a220
+Step 5/8 : COPY ./s2i/bin/ /usr/libexec/s2i
+ ---> 150258441631
+Removing intermediate container c3075efc093d
+Step 6/8 : USER 1001
+ ---> Running in 279e0404124f
+ ---> 6cffaf3bf345
+Removing intermediate container 279e0404124f
+Step 7/8 : EXPOSE 8000
+ ---> Running in 066ab609a8a6
+ ---> 97d9125a4d1e
+Removing intermediate container 066ab609a8a6
+Step 8/8 : CMD /usr/libexec/s2i/usage
+ ---> Running in f824a31abb78
+ ---> 6e78b530abdd
+Removing intermediate container f824a31abb78
+Successfully built 6e78b530abdd
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# docker images
+REPOSITORY                                                      TAG                 IMAGE ID            CREATED             SIZE
+s2i-cpp                                                         latest              6e78b530abdd        4 seconds ago       653 MB
+docker-registry.default.svc:5000/python-test/django1            latest              cc44c8308d02        8 days ago          677 MB
+docker.io/ansibleplaybookbundle/origin-ansible-service-broker   latest              4299afcf9368        9 days ago          580 MB
+docker.io/openshift/origin-web-console                          v3.9.0              2bff42918944        2 weeks ago         489 MB
+docker.io/openshift/origin-docker-registry                      v3.9.0              c13803d064c8        2 weeks ago         458 MB
+docker.io/openshift/origin-haproxy-router                       v3.9.0              0a48e702efe7        2 weeks ago         1.28 GB
+docker.io/openshift/origin-sti-builder                          v3.9.0              e8cee27c1256        2 weeks ago         1.25 GB
+docker.io/openshift/origin-deployer                             v3.9.0              78a4725976a1        2 weeks ago         1.25 GB
+docker.io/openshift/origin-template-service-broker              v3.9.0              5af347e1e954        2 weeks ago         305 MB
+docker.io/openshift/origin-pod                                  v3.9.0              f62f913f6617        2 weeks ago         220 MB
+docker.io/openshift/origin-service-catalog                      v3.9.0              34952a2e3eb8        2 weeks ago         293 MB
+docker.io/centos/python-36-centos7                              <none>              fe69a03d2e37        2 weeks ago         641 MB
+docker.io/cockpit/kubernetes                                    latest              dc86c9956ad6        2 weeks ago         369 MB
+docker.io/centos                                                latest              e934aafc2206        3 weeks ago         199 MB
+docker.io/openshift/base-centos7                                latest              4842f0bd3d61        15 months ago       383 MB
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# cat s2i/bin/assemble 
+#!/bin/bash -e
+#
+# S2I assemble script for the 'openshift/base-centos7' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#       https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 'openshift/base-centos7' assemble script is executed with the '-h' flag, print the usage.
+if [[ "$1" == "-h" ]]; then
+        exec /usr/libexec/s2i/usage
+fi
+
+# Restore artifacts from the previous build (if they exist).
+#
+if [ "$(ls /tmp/artifacts/ 2>/dev/null)" ]; then
+  echo "---> Restoring build artifacts..."
+  mv /tmp/artifacts/. ./
+fi
+
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+
+echo "---> Building application from source..."
+# Add build steps for your application, eg npm install, bundle install, pip install, etc.
+gcc socket/chat.c -o chat
+
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# cat s2i/bin/run 
+#!/bin/bash -e
+#
+# S2I run script for the 'openshift/base-centos7' image.
+# The run script executes the server that runs your application.
+#
+# For more information see the documentation:
+#       https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+exec ./chat
+
+[root@node6 s2i-cpp]# cat s2i/bin/usage 
+#!/bin/bash -e
+cat <<EOF
+This is the openshift/base-centos7 S2I image:
+To use it, install S2I: https://github.com/openshift/source-to-image
+
+Sample invocation:
+s2i build https://github.com/larkguo/tests.git s2i-cpp s2i-test 
+
+You can then run the resulting image via:
+docker run  -itd -p 8000:8000  s2i-test
+EOF
+[root@node6 s2i-cpp]#
+[root@node6 s2i-cpp]# s2i build https://github.com/larkguo/tests.git s2i-cpp s2i-test 
+---> Installing application source...
+---> Building application from source...
+Build completed successfully
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# docker images
+REPOSITORY                                                      TAG                 IMAGE ID            CREATED             SIZE
+s2i-test                                                        latest              0d710293ed22        23 minutes ago      663 MB
+s2i-cpp                                                         latest              11d7e16c642a        24 minutes ago      653 MB
+docker-registry.default.svc:5000/python-test/django1            latest              cc44c8308d02        8 days ago          677 MB
+docker.io/ansibleplaybookbundle/origin-ansible-service-broker   latest              4299afcf9368        9 days ago          580 MB
+docker.io/openshift/origin-web-console                          v3.9.0              2bff42918944        2 weeks ago         489 MB
+docker.io/openshift/origin-docker-registry                      v3.9.0              c13803d064c8        2 weeks ago         458 MB
+docker.io/openshift/origin-haproxy-router                       v3.9.0              0a48e702efe7        2 weeks ago         1.28 GB
+docker.io/openshift/origin-sti-builder                          v3.9.0              e8cee27c1256        2 weeks ago         1.25 GB
+docker.io/openshift/origin-deployer                             v3.9.0              78a4725976a1        2 weeks ago         1.25 GB
+docker.io/openshift/origin-template-service-broker              v3.9.0              5af347e1e954        2 weeks ago         305 MB
+docker.io/openshift/origin-pod                                  v3.9.0              f62f913f6617        2 weeks ago         220 MB
+docker.io/openshift/origin-service-catalog                      v3.9.0              34952a2e3eb8        2 weeks ago         293 MB
+docker.io/centos/python-36-centos7                              <none>              fe69a03d2e37        2 weeks ago         641 MB
+docker.io/cockpit/kubernetes                                    latest              dc86c9956ad6        2 weeks ago         369 MB
+docker.io/centos                                                latest              e934aafc2206        3 weeks ago         199 MB
+docker.io/openshift/base-centos7                                latest              4842f0bd3d61        15 months ago       383 MB
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# docker run  -itd -p 8000:8000  s2i-test
+f4da5a7a1ec5c33ee6ed263661b77d18c2d06e57b3e4570a0da61c3832737867
+[root@node6 s2i-cpp]# docker exec -it f4da5a7a1ec5c33ee6ed263661b77d18c2d06e57b3e4570a0da61c3832737867 sh
+sh-4.2$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1450
+        inet 172.17.0.2  netmask 255.255.0.0  broadcast 0.0.0.0
+        inet6 fe80::42:acff:fe11:2  prefixlen 64  scopeid 0x20<link>
+        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)
+        RX packets 8  bytes 648 (648.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 8  bytes 648 (648.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+sh-4.2$ ps -ef
+UID         PID   PPID  C STIME TTY          TIME CMD
+default       1      0  0 02:47 ?        00:00:00 ./chat
+default       5      0  0 02:47 ?        00:00:00 sh
+default      10      5  0 02:47 ?        00:00:00 ps -ef
+sh-4.2$ netstat -antup
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:8000            0.0.0.0:*               LISTEN      1/./chat            
+sh-4.2$  
+sh-4.2$ exit
+exit
+[root@node6 s2i-cpp]# docker ps
+CONTAINER ID        IMAGE                                                                                                                          COMMAND                  CREATED             STATUS              PORTS                    NAMES
+f4da5a7a1ec5        s2i-test                                                                                                                       "container-entrypo..."   8 minutes ago       Up 8 minutes        0.0.0.0:8000->8000/tcp   elastic_booth
+2d23bb342849        34952a2e3eb8                                                                                                                   "/usr/bin/service-..."   7 days ago          Up 7 days                                    k8s_controller-manager_controller-manager-cpq5m_kube-service-catalog_869c8441-486c-11e8-999e-000c2949828f_4
+f9c4682dc9d4        docker-registry.default.svc:5000/python-test/django1@sha256:9adf8123d97d5dbd8a88c066eeed7dda5780314278b46b79a02e75a42d7e7c38   "container-entrypo..."   7 days ago          Up 7 days                                    k8s_django1_django1-1-6xmj6_python-test_24d7096b-48f3-11e8-999e-000c2949828f_1
+f3f40f30c56b        docker.io/cockpit/kubernetes@sha256:868b13bea76a5d7ba6f874c4fd94809e3f6edb94d928360bdaac768fc4b6c73a                           "/usr/libexec/cock..."   7 days ago          Up 7 days                                    k8s_registry-console_registry-console-1-xfp9n_default_c3a4b75f-486b-11e8-999e-000c2949828f_3
+709b54561de5        c13803d064c8                                                                                                                   "/bin/sh -c '/usr/..."   7 days ago          Up 7 days                                    k8s_registry_docker-registry-1-6dsws_default_2b475902-486b-11e8-999e-000c2949828f_3
+72f98a2a449c        34952a2e3eb8                                                                                                                   "/usr/bin/service-..."   7 days ago          Up 7 days                                    k8s_apiserver_apiserver-tthmg_kube-service-catalog_869c7043-486c-11e8-999e-000c2949828f_2
+cc0e50a3f128        5af347e1e954                                                                                                                   "/usr/bin/template..."   7 days ago          Up 7 days                                    k8s_c_apiserver-cpmvg_openshift-template-service-broker_35994c38-486e-11e8-999e-000c2949828f_2
+55692b4324f3        2bff42918944                                                                                                                   "/usr/bin/origin-w..."   7 days ago          Up 7 days                                    k8s_webconsole_webconsole-6bf6fc6548-kr5sh_openshift-web-console_5b18ed6f-486e-11e8-999e-000c2949828f_2
+5b3d190c330c        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_apiserver-tthmg_kube-service-catalog_869c7043-486c-11e8-999e-000c2949828f_2
+33751b45bdef        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_django1-1-6xmj6_python-test_24d7096b-48f3-11e8-999e-000c2949828f_2
+fd3bffa29ebf        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_controller-manager-cpq5m_kube-service-catalog_869c8441-486c-11e8-999e-000c2949828f_2
+a028a9878fdb        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_registry-console-1-xfp9n_default_c3a4b75f-486b-11e8-999e-000c2949828f_2
+bcbc7e347bae        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_webconsole-6bf6fc6548-kr5sh_openshift-web-console_5b18ed6f-486e-11e8-999e-000c2949828f_2
+f07b8dc114cc        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_docker-registry-1-6dsws_default_2b475902-486b-11e8-999e-000c2949828f_2
+068c27723e64        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_apiserver-cpmvg_openshift-template-service-broker_35994c38-486e-11e8-999e-000c2949828f_2
+36e6babe2384        0a48e702efe7                                                                                                                   "/usr/bin/openshif..."   7 days ago          Up 7 days                                    k8s_router_router-1-psj4r_default_2ca4f781-486b-11e8-999e-000c2949828f_3
+cdcf8215258b        openshift/origin-pod:v3.9.0                                                                                                    "/usr/bin/pod"           7 days ago          Up 7 days                                    k8s_POD_router-1-psj4r_default_2ca4f781-486b-11e8-999e-000c2949828f_2
+[root@node6 s2i-cpp]# 
+[root@node6 s2i-cpp]# docker stop f4da5a7a1ec5
+f4da5a7a1ec5
+[root@node6 s2i-cpp]# docker system prune
+WARNING! This will remove:
+        - all stopped containers
+        - all volumes not used by at least one container
+        - all networks not used by at least one container
+        - all dangling images
+Are you sure you want to continue? [y/N] y
+Deleted Containers:
+f4da5a7a1ec5c33ee6ed263661b77d18c2d06e57b3e4570a0da61c3832737867
+
+Total reclaimed space: 52 B
+[root@node6 s2i-cpp]# docker rm f4da5a7a1ec5 -f
+Error response from daemon: No such container: f4da5a7a1ec5
+[root@node6 s2i-cpp]# docker rmi s2i-cpp s2i-test
+Untagged: s2i-cpp:latest
+Untagged: s2i-test:latest
+Deleted: sha256:0d710293ed228f1a6553c9903a73efea3742cf0bc8e474da8bc4796441da70a3
+Deleted: sha256:d31288df94ce55a2b4be720f0ba1638c532680c041be60d6cdae6eaf1e3f4bc0
+Deleted: sha256:11d7e16c642a27423ab0ac3c6ac68acd65e853954664e1e58ac83ff6244c4409
+Deleted: sha256:9d7821f2968f5be61592dc2c8a51ac148e9ba3c4c8e2e9595fde9b66eea70b38
+Deleted: sha256:c3681ad25b3e118c5638ad0506e5c5cd5623c310c79d1f10fd97f06aacd117a7
+Deleted: sha256:0c323315a40ce99400856b1aeb965ac34320fbe5f2037b4be1ae2d545b21bad4
+Deleted: sha256:d4495d3a2e117758cab166cfe5cae30e262942cd3f647414d43d6a71d3129d39
+Deleted: sha256:a873cca7cdbae5ddebebb1e923411bf79f2477a6113a5bd03ce92aed04261b9f
+Deleted: sha256:1196fb563991c539bcb39ade8f16ffd83bf3b38bf763d9ec0b93a0877aca5e48
+Deleted: sha256:00eb6d2a76559c3eaae531d0159bbda8f5d56b9e2d5e0807a2744af502b5eb6f
+Deleted: sha256:42354ff1f6ce7604328c4bea37e738c7be670d356b54eaee2c2c56d3a97fd31f
+Deleted: sha256:9295b24710d2e40f583bc8ecb4c98fe1145fdaeea5559a6a4f088a0304637ef2
+Deleted: sha256:dc57d72511113f8b830132e621fbd29b048ef482974b45cd2ccbfd66965e5610
+[root@node6 s2i-cpp]# 
