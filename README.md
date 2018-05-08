@@ -104,7 +104,7 @@
     # For more information see the documentation:
     #       https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
     #
-    exec ./chat
+    exec ./chat 8000
     
     $ cat s2i/bin/usage 
     #!/bin/bash -e
