@@ -31,7 +31,17 @@ drwx------ 3 root root   33 May  3 18:06 test
         └── index.html
 
 5 directories, 10 files
-[root@node6 s2i-cpp]#
+[root@node6 s2i-cpp]# cat Makefile 
+IMAGE_NAME = s2i-cpp
+
+.PHONY: build
+build:
+        docker build -t $(IMAGE_NAME) .
+
+.PHONY: test
+test:
+        docker build -t $(IMAGE_NAME)-candidate .
+        IMAGE_NAME=$(IMAGE_NAME)-candidate test/run
 [root@node6 s2i-cpp]# cat Dockerfile 
 # openshift/base-centos7
 FROM openshift/base-centos7
